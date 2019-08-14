@@ -8,9 +8,8 @@
 #include <errno.h>
 
 #include "dccp.h"
+#include "common.h"
 
-#define PORT 1337
-#define SERVICE_CODE 42
 #define BUFFER_SIZE 512
 
 void writefile(int sock_fd, FILE *fp);
@@ -47,10 +46,9 @@ int main(int argc, char **argv)
 		error_exit("bind");
 
 	// DCCP mandates the use of a 'Service Code' in addition the port
-	if (setsockopt(listen_sock, SOL_DCCP, DCCP_SOCKOPT_SERVICE, &(int) {
-		       htonl(SERVICE_CODE)}, sizeof(int)))
+	if (setsockopt(listen_sock, SOL_DCCP, DCCP_SOCKOPT_SERVICE, &(int) { htonl(SERVICE_CODE)}, sizeof(int)))
 		error_exit("setsockopt(DCCP_SOCKOPT_SERVICE)");
-	
+
 	// 3. Using listen() to put socket into passive listening state, until client wake it up
 	if (listen(listen_sock, 1))
 		error_exit("listen");
@@ -84,7 +82,7 @@ int main(int argc, char **argv)
 
 
 		// Create the file 
-		FILE *fp = fopen(filename, "wb");
+		FILE *fp = fopen("out.bin", "wb");
 		if (fp == NULL) {
 			error_exit("Cannot open the file");
 		}
